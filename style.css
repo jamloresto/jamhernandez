@@ -13,6 +13,9 @@
 	--accent-soft: #eef2ff;
 	--muted-bg: #f3f4f6;
 	--border: rgba(0, 0, 0, 0.08);
+	--card-1: #f3f4f6;
+	--card-2: #e5e7eb;
+	--card-3: #dbeafe;
 }
 
 /* Dark Mode */
@@ -26,6 +29,9 @@ body.dark {
 	--accent-soft: #1e1b4b;
 	--muted-bg: #1f2937;
 	--border: rgba(255, 255, 255, 0.08);
+	--card-1: #1f2937;
+	--card-2: #282536;
+	--card-3: #1e3a8a;
 }
 
 /* =========================================
@@ -255,8 +261,8 @@ h6 {
 	margin-top: 1rem;
 	list-style: none;
 	display: grid;
-	grid-template-columns: repeat(3, 1fr);
-	gap: 1rem;
+	grid-template-columns: repeat(2, 1fr);
+	gap: 1.5rem;
 }
 
 .hobby-item {
@@ -269,6 +275,18 @@ h6 {
 .hobby-item:hover {
 	transform: translateY(-2px);
 }
+
+.hobby-item:nth-child(3n-2) {
+	grid-column: span 2;
+}
+
+.hobby-item:last-child:nth-child(odd) {
+	grid-column: span 2;
+}
+
+.hobby-item:nth-child(3n-2) { background: var(--card-1); }
+.hobby-item:nth-child(3n-1) { background: var(--card-2); }
+.hobby-item:nth-child(3n)   { background: var(--card-3); }
 
 /* =========================================
    CONTACT
