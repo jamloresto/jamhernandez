@@ -302,7 +302,6 @@ h6 {
 		.hobby-card {
 			position: relative;
 			width: 100%;
-			min-height: 180px;
 			border-radius: 1rem;
 			perspective: 1000px;
 			cursor: pointer;
@@ -331,10 +330,26 @@ h6 {
 		}
 
 		.hobby-front {
+			overflow: hidden;
+			
 			h3 {
 				margin: 0;
 				text-align: center;
+				z-index: 10;
 			}
+		}
+
+		.hobby-icon {
+			position: absolute;
+			bottom: -17.5%;
+			right: -5%;
+
+			height: 260px;
+			width: auto;
+
+			opacity: 0.08;
+			pointer-events: none;
+			z-index: 1;
 		}
 
 		.hobby-back {
