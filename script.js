@@ -13,7 +13,6 @@ funFactBtn.addEventListener("click", () => {
 	funFactText.textContent = funFacts[randomIndex];
 });
 
-
 // Color theme
 const toggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
@@ -33,8 +32,22 @@ toggleBtn.addEventListener("click", () => {
 
 updateIcon();
 
-
 // Auto year
 const yearEl = document.getElementById("year");
 
 yearEl.textContent = new Date().getFullYear();
+
+// Hobby cards
+const hobbyCards = document.querySelectorAll(".hobby-card");
+
+hobbyCards.forEach((card) => {
+	card.addEventListener("click", () => {
+		if (window.innerWidth <= 768) {
+			hobbyCards.forEach((c) => {
+				if (c !== card) c.classList.remove("is-flipped");
+			});
+
+			card.classList.toggle("is-flipped");
+		}
+	});
+});
