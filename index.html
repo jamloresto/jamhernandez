@@ -12,7 +12,7 @@
 	</head>
 
 	<body>
-		<header class="site-header">
+		<header class="site-header is-hidden">
 			<div class="container header-content">
 				<div class="brand">
 					<h1 class="site-title comforter-regular">Jessa Mae Hernandez</h1>
@@ -31,10 +31,28 @@
 				</nav>
 			</div>
 		</header>
+		<section class="intro" id="intro" aria-label="Intro loading screen">
+			<div class="intro-inner">
+				<div class="hello-wrap">
+					<div class="hello" id="helloText">Hello</div>
+				</div>
 
-		<main>
+				<div class="sub">Loading portfolio</div>
+
+				<div class="progress" aria-hidden="true">
+					<i id="bar"></i>
+				</div>
+
+				<!-- <div class="hint">—</div> -->
+			</div>
+
+			<!-- wipe layer (covers screen then slides away) -->
+			<div class="wipe" id="wipe"></div>
+		</section>
+
+		<main class="page" id="page">
 			<section id="about" class="section">
-				<div class="container grid">
+				<div class="container grid hero">
 					<div class="card about-card" id="aboutCard">
 						<h2>About Me</h2>
 						<div>
@@ -65,12 +83,6 @@
 								<div class="about-toggle-line"></div>
 							</div>
             </div>
-
-						<!-- <button id="funFactBtn" class="btn" type="button">
-							Click for a fun fact
-						</button>
-
-						<p id="funFactText" class="fun-fact" aria-live="polite"></p> -->
 					</div>
 
 					<div class="card image-card">
@@ -83,7 +95,7 @@
 				</div>
 			</section>
 
-			<section id="hobbies" class="section section-alt">
+			<section id="hobbies" class="section section-hobbies  is-hidden">
 				<div class="container">
 					<h2>Hobbies & Interests</h2>
 					<p class="hobby-instruction">
@@ -154,30 +166,6 @@
 						<li class="hobby-item">
 							<div class="hobby-card" tabindex="0">
 								<div class="hobby-face hobby-front">
-									<h3>Learning & Self-Improvement</h3>
-									<img src="assets/icons/book.svg" alt="book icon" class="hobby-icon" />
-									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
-									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
-								</div>
-								<div class="hobby-face hobby-back">
-									<p>
-										I enjoy reading, watching educational content, and learning about
-										technology, productivity, fitness, and personal growth. Some people might
-										call it doom scrolling — but based on my current algorithm, I actually
-										learn a lot.
-									</p>
-									<p>
-										Thankfully, my feed isn&apos;t filled with random, pure comedic nonsense
-										(well… most of the time). I try to be intentional about what I consume, so
-										even my scroll time turns into something useful and growth-oriented.
-									</p>
-								</div>
-							</div>
-						</li>
-
-						<li class="hobby-item">
-							<div class="hobby-card" tabindex="0">
-								<div class="hobby-face hobby-front">
 									<h3>Quality Time</h3>
 									<img src="assets/icons/heart.svg" alt="heart icon" class="hobby-icon" />
 									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
@@ -228,6 +216,27 @@
 								</div>
 							</div>
 						</li>
+
+						<li class="hobby-item">
+							<div class="hobby-card" tabindex="0">
+								<div class="hobby-face hobby-front">
+									<h3>Learning & Self-Improvement</h3>
+									<img src="assets/icons/book.svg" alt="book icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
+								</div>
+								<div class="hobby-face hobby-back">
+									<p>
+										I enjoy reading, watching educational content, and learning about
+										technology, productivity, fitness, and personal growth. Some people might
+										call it doom scrolling — but based on my current algorithm, I actually
+										learn a lot because my feed isn&apos;t filled with random, pure comedic nonsense
+										(well… most of the time). I try to be intentional about what I consume, so
+										even my scroll time turns into something useful and growth-oriented.
+									</p>
+								</div>
+							</div>
+						</li>
 					</ul>
 				</div>
 			</section>
@@ -244,9 +253,9 @@
 
 					<div class="contact-links">
 						<a href="mailto:jloresto@up.edu.ph" class="contact-btn primary">Email</a>
-						<a href="https://www.linkedin.com/in/jam-hernandez/" class="contact-btn">LinkedIn</a>
-						<a href="https://github.com/jamloresto" class="contact-btn">GitHub</a>
-						<a href="https://www.jamloresto.com/" class="contact-btn">Portfolio</a>
+						<a href="https://www.linkedin.com/in/jam-hernandez/" class="contact-btn" target="_blank">LinkedIn</a>
+						<a href="https://github.com/jamloresto" class="contact-btn" target="_blank">GitHub</a>
+						<a href="https://www.jamloresto.com/" class="contact-btn" target="_blank">Portfolio</a>
 					</div>
 				</div>
 			</section>
