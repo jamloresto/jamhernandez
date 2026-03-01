@@ -4,34 +4,42 @@
 
 /* Light Mode (Default) */
 :root {
-	--bg: #f7f7fb;
-	--text: #1f2937;
-	--card-bg: #ffffff;
-	--header-bg: #111827;
-	--header-text: #ffffff;
-	--accent: #6366f1;
-	--accent-soft: #eef2ff;
-	--muted-bg: #f3f4f6;
-	--border: rgba(0, 0, 0, 0.08);
-	--card-1: #d3e6ff;
-	--card-2: #e5e7eb;
-	--card-3: #d7d5e9;
+	--bg: #dedbd4;
+	--text: #2f3e46;
+	--card-bg: #f4f2ee;
+	
+	--header-bg: #7f9aa3;
+	--header-text: #f8fafc;
+
+	--accent: #c06c4e;
+	--accent-soft: #f3dfd6;
+
+	--muted-bg: #c9c5bd;
+	--border: rgba(47, 62, 70, 0.12);
+
+	--card-1: #9fb3b9;
+	--card-2: #c9c5bd;
+	--card-3: #b7c8cd;
 }
 
 /* Dark Mode */
 body.dark {
-	--bg: #0f172a;
-	--text: #e5e7eb;
-	--card-bg: #1e293b;
-	--header-bg: #020617;
-	--header-text: #f1f5f9;
-	--accent: #818cf8;
-	--accent-soft: #1e1b4b;
-	--muted-bg: #1f2937;
-	--border: rgba(255, 255, 255, 0.08);
-	--card-1: #1f2937;
-	--card-2: #282536;
-	--card-3: #1e3a8a;
+	--bg: #242c38;
+	--text: #e6e3dd;
+	--card-bg: #2f3744;
+
+	--header-bg: #1c232e;
+	--header-text: #f4f1ea;
+
+	--accent: #c2a56b;
+	--accent-soft: #3a3428;
+
+	--muted-bg: #434a54;
+	--border: rgba(230, 227, 221, 0.08);
+
+	--card-1: #434a54;
+	--card-2: #9a8f7e;
+	--card-3: #5a6472;
 }
 
 /* =========================================
@@ -46,6 +54,7 @@ body.dark {
 
 html {
 	font-size: 18px;
+	scroll-behavior: smooth;
 }
 
 /* Between desktop and mobile → fluid scaling */
@@ -149,24 +158,91 @@ h6 {
 	gap: 1rem;
 }
 
+.brand h1 {
+  font-family: "Comforter", cursive;
+  font-weight: 400;
+  font-style: normal;
+	font-size: 3rem;
+	margin-bottom: -1.5rem;
+	color: var(--accent);
+}
+
 .nav-list {
 	list-style: none;
 	display: flex;
 	gap: 1rem;
 }
 
+.nav {
+	display: flex;
+	align-items: center;
+	gap: 0.75rem;
+}
+
 .nav a {
+	position: relative;
 	color: var(--header-text);
 	text-decoration: none;
 	padding: 0.5rem 0.75rem;
 	border-radius: 0.5rem;
-	transition: background 0.2s ease, transform 0.2s ease;
+	transition: color 0.3s ease;
 }
 
+/* Create underline using pseudo-element */
+.nav a::after {
+	content: "";
+	position: absolute;
+	left: 0;
+	bottom: 4px;
+	width: 100%;
+	height: 2px;
+	background-color: var(--accent);
+	transform: scaleX(0);
+	transform-origin: left;
+	transition: transform 0.5s ease-in;
+}
+
+/* Hover effect */
 .nav a:hover {
-	background: var(--accent);
-	color: white;
-	transform: translateY(-1px);
+	color: var(--accent);
+}
+
+.nav a:hover::after {
+	transform: scaleX(1);
+}
+
+@media (max-width: 768px) {
+	.header-content {
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		text-align: center;
+		gap: 0.75rem;
+	}
+
+	.brand {
+		margin: auto;
+		h1 {
+			font-size: 2.5rem;
+		}
+	}
+
+	.nav {
+		justify-content: center;
+		margin: auto;
+	}
+
+	.nav-list {
+		justify-content: center;
+		flex-wrap: wrap;
+		gap: 0.5rem;
+		padding: 0;
+		margin: 0;
+	}
+
+	.nav a {
+		padding: 0.4rem 0.6rem;
+	}
 }
 
 .theme-toggle {
@@ -182,7 +258,7 @@ h6 {
 .theme-toggle img {
 	width: 24px;
 	height: 24px;
-	transition: transform 0.2s ease;
+	transition: transform 0.5s ease;
 }
 
 .theme-toggle:hover img {
@@ -203,15 +279,83 @@ h6 {
 }
 
 .image-card {
-	padding: 0;
+	max-height: 360px;
+	transition: max-height 0.45s ease;
 	overflow: hidden;
+	padding: 0;
 }
+
+@media (min-width: 769px){
+	.about-card.is-expanded + .image-card {
+		max-height: 1000px;
+	}
+}
+
 
 .profile-img {
 	width: 100%;
 	height: 100%;
 	object-fit: cover;
 	display: block;
+	transition: all 0.3s ease;
+}
+
+.about-card {
+	position: relative;
+}
+
+.about-toggle-container {
+	margin-top: auto;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: flex-start;
+	cursor: pointer;
+	gap: 4px;
+
+	.about-toggle {
+		margin-top: 0.5rem;
+		margin-right: auto;
+		border: none;
+		color: var(--accent);
+		background-color: transparent;
+		cursor: pointer;
+		transition: color 0.3s ease;
+		padding: 0;
+	}
+
+	.about-toggle-line {
+		width: 100%;
+		height: 2px;
+		background-color: var(--accent);
+		transform: scaleX(0);
+		transform-origin: left;
+		transition: transform 0.5s ease-in;
+	}
+
+	/* 🔥 This is the important part */
+	&:hover .about-toggle-line {
+		width: 100%;
+	}
+
+	&:hover .about-toggle {
+		color: var(--header-bg);
+	}
+}
+
+.about-toggle-container:hover .about-toggle-line {
+	transform: scaleX(1);
+}
+
+.about-more {
+	max-height: 0;
+	overflow: hidden;
+	opacity: 0;
+	transition: max-height 0.45s ease, opacity 0.25s ease;
+}
+
+.about-card.is-expanded .about-more {
+	max-height: 1000px;
+	opacity: 1;
 }
 
 /* =========================================
@@ -263,12 +407,10 @@ h6 {
 	opacity: 0.7;
 }
 
-/* Hide mobile text by default */
 .mobile-text {
 	display: none;
 }
 
-/* Show mobile version on small screens */
 @media (max-width: 768px) {
 	.desktop-text {
 		display: none;
@@ -276,6 +418,30 @@ h6 {
 	.mobile-text {
 		display: inline;
 	}
+}
+
+.flip-icon {
+	position: absolute;
+	bottom: 16px;
+	right: 16px;
+
+	height: 18px;
+	width: auto;
+
+	pointer-events: none;
+	z-index: 1;
+}
+
+.flip-icon--dark {
+	display: none;
+}
+
+body.dark .flip-icon--dark {
+	display: block;
+}
+
+body.dark .flip-icon--light {
+	display: none;
 }
 
 .hobby-list {
@@ -335,7 +501,7 @@ h6 {
 			h3 {
 				margin: 0;
 				text-align: center;
-				z-index: 10;
+				z-index: 2;
 			}
 		}
 
@@ -408,7 +574,6 @@ h6 {
 			}
 		}
 
-		/* Tap flip (JS will toggle .is-flipped) */
 		.hobby-card.is-flipped .hobby-front {
 			transform: rotateY(180deg);
 		}
@@ -450,26 +615,6 @@ h6 {
 		opacity: 0.8;
 	}
 
-	.contact-email {
-		grid-column: 7 / -1;
-		font-size: 1.5rem;
-		font-weight: 500;
-		text-align: right;
-
-		a {
-			font-size: 2rem;
-			text-decoration: none;
-			color: var(--header-text);
-			opacity: 0.4;
-			transition: all 0.5s ease;
-		}
-
-		a:hover {
-			color: var(--accent);
-			opacity: 0.6;
-		}
-	}
-
 	.contact-links {
 		grid-column: 1 / -1;
 		display: flex;
@@ -477,7 +622,7 @@ h6 {
 		margin-top: 2rem;
 
 		.contact-btn {
-			padding: 0.75rem 1.5rem;
+			padding: 0.75rem 2.5rem;
 			border: 1px solid var(--header-text);
 			border-radius: 999px;
 			text-decoration: none;
@@ -485,8 +630,18 @@ h6 {
 			transition: all 0.5s ease;
 
 			&:hover {
+				background: var(--accent);
+				color: var(--header-text);
+			}
+			
+			&.primary {
 				background: var(--header-text);
 				color: var(--header-bg);
+
+				&:hover {
+				background: var(--accent);
+				color: var(--header-text);
+			}
 			}
 		}
 	}
@@ -504,15 +659,6 @@ h6 {
 		.contact-message {
 			grid-column: auto;
 			max-width: 100%;
-		}
-
-		.contact-email {
-			grid-column: auto;
-			text-align: center;
-
-			a {
-				font-size: 1rem;
-			}
 		}
 
 		.contact-links {
