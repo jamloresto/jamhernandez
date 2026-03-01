@@ -7,15 +7,15 @@
 		<link rel="stylesheet" href="style.css" />
     
     <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+		<link href="https://fonts.googleapis.com/css2?family=Comforter&family=Outfit:wght@100..900&family=Space+Grotesk:wght@300..700&display=swap" rel="stylesheet">
 	</head>
 
 	<body>
 		<header class="site-header">
 			<div class="container header-content">
 				<div class="brand">
-					<h1 class="site-title">Jessa Mae Hernandez</h1>
+					<h1 class="site-title comforter-regular">Jessa Mae Hernandez</h1>
 					<p class="tagline">My Single-Page Website</p>
 				</div>
 
@@ -25,41 +25,52 @@
 						<li><a href="#hobbies">Hobbies</a></li>
 						<li><a href="#contact">Contact</a></li>
 					</ul>
+					<button id="themeToggle" class="theme-toggle">
+						<img id="themeIcon" src="assets/icons/dark.svg" alt="Toggle theme" />
+					</button>
 				</nav>
-        <button id="themeToggle" class="theme-toggle">
-          <img id="themeIcon" src="assets/icons/dark.svg" alt="Toggle theme" />
-        </button>
 			</div>
 		</header>
 
 		<main>
 			<section id="about" class="section">
 				<div class="container grid">
-					<div class="card">
+					<div class="card about-card" id="aboutCard">
 						<h2>About Me</h2>
-            <div class="paragraph-group">
-              <p>
-                Hi, I&apos;m Jam.
-              </p>
-              <p>
-                I&apos;m someone who enjoys building things — whether it&apos;s a website, a small digital tool, or a simple idea turned into something useful. I like creating clean, organized, and meaningful work that people can actually use and appreciate.
-              </p>
-              <p>
-                I value growth, consistency, and doing things with intention. I believe that small improvements every day lead to big results over time. Whether I&apos;m learning something new or working on a project, I always aim to do it with focus and purpose.
-              </p>
-              <p>
-                Outside of tech, I&apos;m also a licensed financial advisor, helping individuals and families plan smarter for their future. I&apos;m passionate about financial literacy and empowering people to make confident, informed decisions about protection, savings, and long-term goals.
-              </p>
-              <p>
-                Outside of work, I&apos;m always curious. I enjoy exploring new technologies, improving my skills, and finding better ways to solve problems. I also appreciate taking time to reset and recharge.
-              </p>
+						<div>
+							<div class="paragraph-group">
+								<p>
+									Hi, I&apos;m Jam.
+								</p>
+								<p>
+									I&apos;m someone who enjoys building things — whether it&apos;s a website, a small digital tool, or a simple idea turned into something useful. I like creating clean, organized, and meaningful work that people can actually use and appreciate.
+								</p>
+							</div>
+							<div class="about-more paragraph-group" id="aboutMore">
+								<p>
+									I value growth, consistency, and doing things with intention. I believe that small improvements every day lead to big results over time. Whether I&apos;m learning something new or working on a project, I always aim to do it with focus and purpose.
+								</p>
+								<p>
+									Outside of tech, I&apos;m also a licensed financial advisor, helping individuals and families plan smarter for their future. I&apos;m passionate about financial literacy and empowering people to make confident, informed decisions about protection, savings, and long-term goals.
+								</p>
+								<p>
+									Outside of work, I&apos;m always curious. I enjoy exploring new technologies, improving my skills, and finding better ways to solve problems. I also appreciate taking time to reset and recharge.
+								</p>
+							</div>
+							
+							<div class="about-toggle-container">
+								<button class="about-toggle" id="aboutToggle" aria-expanded="false" aria-controls="aboutMore">
+									Read more
+								</button>
+								<div class="about-toggle-line"></div>
+							</div>
             </div>
 
-						<button id="funFactBtn" class="btn" type="button">
+						<!-- <button id="funFactBtn" class="btn" type="button">
 							Click for a fun fact
 						</button>
 
-						<p id="funFactText" class="fun-fact" aria-live="polite"></p>
+						<p id="funFactText" class="fun-fact" aria-live="polite"></p> -->
 					</div>
 
 					<div class="card image-card">
@@ -68,7 +79,6 @@
 							alt="Profile image"
 							class="profile-img"
 						/>
-						<p class="caption">Profile image</p>
 					</div>
 				</div>
 			</section>
@@ -87,6 +97,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Building Side Projects</h3>
 									<img src="assets/icons/internet.svg" alt="internet icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -102,6 +114,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Staying Active</h3>
 									<img src="assets/icons/foot.svg" alt="foot icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -123,6 +137,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Gaming</h3>
 									<img src="assets/icons/game.svg" alt="game icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>I play games like Valorant and Mobile Legends: Bang Bang.</p>
@@ -140,6 +156,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Learning & Self-Improvement</h3>
 									<img src="assets/icons/book.svg" alt="book icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -162,6 +180,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Quality Time</h3>
 									<img src="assets/icons/heart.svg" alt="heart icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -178,6 +198,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Hot Wheels Collecting</h3>
 									<img src="assets/icons/car.svg" alt="car icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -194,6 +216,8 @@
 								<div class="hobby-face hobby-front">
 									<h3>Financial Planning & Wealth Building</h3>
 									<img src="assets/icons/money.svg" alt="money icon" class="hobby-icon" />
+									<img src="assets/icons/redo.svg" alt="flip icon" class="flip-icon flip-icon--light" />
+									<img src="assets/icons/redo-dark.svg" alt="flip icon" class="flip-icon flip-icon--dark" />
 								</div>
 								<div class="hobby-face hobby-back">
 									<p>
@@ -218,11 +242,8 @@
 						feel free to reach out through email or connect with me below.
 					</p>
 
-					<div class="contact-email">
-						<a href="mailto:jloresto@up.edu.ph">jloresto@up.edu.ph</a>
-					</div>
-
 					<div class="contact-links">
+						<a href="mailto:jloresto@up.edu.ph" class="contact-btn primary">Email</a>
 						<a href="https://www.linkedin.com/in/jam-hernandez/" class="contact-btn">LinkedIn</a>
 						<a href="https://github.com/jamloresto" class="contact-btn">GitHub</a>
 						<a href="https://www.jamloresto.com/" class="contact-btn">Portfolio</a>
