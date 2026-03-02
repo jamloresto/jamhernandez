@@ -23,6 +23,7 @@
 					<ul class="nav-list">
 						<li><a href="#about">About</a></li>
 						<li><a href="#hobbies">Hobbies</a></li>
+						<li><a href="#fun-facts">Fun Facts</a></li>
 						<li><a href="#contact">Contact</a></li>
 					</ul>
 					<button id="themeToggle" class="theme-toggle">
@@ -241,6 +242,37 @@
 				</div>
 			</section>
 
+			<section class="section" id="fun-facts">
+				<div class="container">
+					<h2>Fun Facts & Furry Friends</h2>
+					<p class="funfact-cta__hint">Tip: press <kbd>Esc</kbd> to close the pop-up.</p>
+					<div class="section-funfact">
+						<div class="card funfact-cta">
+							<div class="funfact-cta__content">
+								<h2>Fun Facts</h2>
+								<p class="funfact-cta__subtitle">
+									Want to something random about me? Hit the button!
+								</p>
+	
+								<button class="btn" id="surpriseBtn" type="button">Surprise me</button>
+							</div>
+						</div>
+						<div class="card funfact-cta">
+							<div class="funfact-cta__content">
+								<h2>Furry Friends</h2>
+								<p class="funfact-cta__subtitle">
+									Brighten up your day with a random furry friend.
+								</p>
+		
+								<button class="funfact-cta__btn btn" id="furryfriend-btn" type="button">
+									SurPURRise me!
+								</button>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			<section id="contact" class="section contact-section">
 				<div class="container contact-grid">
 					
@@ -260,6 +292,108 @@
 				</div>
 			</section>
 		</main>
+
+		<!-- FUN FACT MODAL START -->
+		<div class="ff-modal" id="funfactModal" aria-hidden="true">
+			<div class="ff-modal__overlay" data-close="true"></div>
+
+			<div class="ff-modal__dialog" role="dialog" aria-modal="true" aria-label="Fun fact modal">
+				<!-- window header -->
+				<div class="ff-window__topbar">
+					<div class="ff-window__dots" aria-hidden="true">
+						<span class="dot dot--red"></span>
+						<span class="dot dot--yellow"></span>
+						<span class="dot dot--green"></span>
+					</div>
+
+					<div class="ff-window__title">Fun Fact</div>
+
+					<button class="ff-window__close" type="button" aria-label="Close fun fact">
+						<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M7 7L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+							<path d="M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						</svg>
+					</button>
+				</div>
+
+				<div class="ff-window__body">
+					<div class="ff-window__media">
+						<img
+							class="ff-image"
+							src="./assets/images/jam.webp"
+							alt="Fun fact visual"
+							loading="lazy"
+						/>
+					</div>
+
+					<div class="ff-window__text">
+						<p class="ff-window__kicker">RANDOM INFO</p>
+						<h3 class="ff-headline">Wanna know something else about me?</h3>
+						<div class="ff-desc">
+							<p>Click “Surprise me” to reveal a random info.</p>
+						</div>
+
+						<div class="ff-window__actions">
+							<button class="btn ff-window__another ff-another" type="button">
+								Tell me more!
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FUN FACT MODAL END -->
+
+		<!-- FURRY FRIENDS MODAL START -->
+		<div class="ff-modal" id="furryfriendsModal" aria-hidden="true">
+			<div class="ff-modal__overlay" data-close="true"></div>
+
+			<div class="ff-modal__dialog" role="dialog" aria-modal="true" aria-label="Fun fact modal">
+				<!-- window header -->
+				<div class="ff-window__topbar">
+					<div class="ff-window__dots" aria-hidden="true">
+						<span class="dot dot--red"></span>
+						<span class="dot dot--yellow"></span>
+						<span class="dot dot--green"></span>
+					</div>
+
+					<div class="ff-window__title">Furry Freinds</div>
+
+					<button class="ff-window__close" type="button" aria-label="Close fun fact">
+						<svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+							<path d="M7 7L17 17" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+							<path d="M7 17L17 7" stroke="currentColor" stroke-width="2" stroke-linecap="round"/>
+						</svg>
+					</button>
+				</div>
+
+				<div class="ff-window__body">
+					<div class="ff-window__media">
+						<img
+							class="ff-image"
+							src="./assets/images/yuki.webp"
+							alt="Fun fact visual"
+							loading="lazy"
+						/>
+					</div>
+
+					<div class="ff-window__text">
+						<p class="ff-window__kicker">A PURRFECT SURPURRISE</p>
+						<h3 class="ff-headline">Wanna see something purrfect?</h3>
+						<div class="ff-desc">
+							<p>Click “See more” to reveal a furry friend.</p>
+						</div>
+
+						<div class="ff-window__actions">
+							<button class="btn ff-window__another ff-another" type="button">
+								See more!
+							</button>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!-- FURRY FRIENDS MODAL END -->
 
 		<footer class="site-footer">
 			<div class="container footer-content">
