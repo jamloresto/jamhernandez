@@ -78,6 +78,9 @@ if (aboutCard && aboutToggle && aboutMore) {
 }
 
 function introduction() {
+
+	document.body.classList.add("no-scroll");
+	
 	const greetings = [
 		"Hello",
 		"Kumusta",
@@ -195,6 +198,8 @@ function introduction() {
 				hobbies.classList.remove("is-hidden");
 				hobbies.classList.add("reveal");
 			}, 1000);
+
+			document.body.classList.remove("no-scroll");
 		}, WIPE_MS * 0.35);
 	}
 
