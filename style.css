@@ -96,6 +96,11 @@ body {
   gap: 0.5rem;
 }
 
+.no-scroll {
+  overflow: hidden;
+  height: 100vh;
+}
+
 /* =========================================
    BASE TYPOGRAPHY
 ========================================= */
