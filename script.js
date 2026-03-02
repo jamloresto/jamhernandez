@@ -206,3 +206,229 @@ function introduction() {
 }
 
 introduction();
+
+// Fun facts Section
+const modalConfigs = [
+	{
+		triggerId: "surpriseBtn",
+		modalId: "funfactModal",
+		data: [
+			{
+				title: "bike.webp",
+				headline: "104KM in One Ride",
+				desc: [
+					"My longest bike ride was 104KM back when I was still living in Bataan. During the pandemic, that was officially my 'biking era.'",
+				],
+				img: "./assets/images/bike.webp",
+			},
+			{
+				title: "hotwheels.webp",
+				headline: "Hot Wheels Collector Since 2013",
+				desc: [
+					"I've collected over 500 Hot Wheels since 2013, mainly Ford and Batman lines. I have no plans of selling them… for now.",
+				],
+				img: "./assets/images/hotwheels.webp",
+			},
+			{
+				title: "taiwan.webp",
+				headline: "Prenup in Taiwan",
+				desc: [
+					"My husband and I had our prenup pictorial in Taiwan. We chose it semi-randomly because it was just way too hot in the Philippines, plus, vacation on the side. Hitting two birds with one stone.",
+				],
+				img: "./assets/images/taiwan.webp",
+			},
+			{
+				title: "mc.webp",
+				headline: "Dream Wedding at Manila Cathedral",
+				desc: [
+					"I've always dreamed of getting married at Manila Cathedral… and it actually happened. Dream. Came. True.",
+				],
+				img: "./assets/images/mc.webp",
+			},
+			{
+				title: "purple.webp",
+				headline: "Purple Hair Era",
+				desc: [
+					"I dyed my hair purple twice. No deep reason… I just think it looks really nice.",
+				],
+				img: "./assets/images/purple.webp",
+			},
+			{
+				title: "vikings.webp",
+				headline: "Manifested Vikings Wedding",
+				desc: [
+					"Back in 2022 while dating at Vikings MOA, I randomly said, 'Gusto ko kapag kinasal ako sa Vikings venue and reception.' Three years later… it happened.",
+				],
+				img: "./assets/images/vikings.webp",
+			},
+		],
+	},
+	{
+		triggerId: "furryfriend-btn",
+		modalId: "furryfriendsModal",
+		data: [
+			{
+				title: "yassi.webp",
+				headline: "Yassi & the Milk Tea",
+				desc: [
+					"Professional zoomies specialist.",
+					"Treat-driven developer assistant.",
+					"Will absolutely judge your code quality.",
+				],
+				img: "./assets/images/yassi.webp",
+			},
+			{
+				title: "yna.webp",
+				headline: "Yna the Royal Napper",
+				desc: [
+					"Sleeps 18 hours a day.",
+					"Still somehow exhausted.",
+					"Master of dramatic slow blinks.",
+				],
+				img: "./assets/images/yna.webp",
+			},
+			{
+				title: "yohan.webp",
+				headline: "Yohan the Style Icon",
+				desc: [
+					"Woke up like this.",
+					"Owns more outfits than I do.",
+					"Main character in every room.",
+				],
+				img: "./assets/images/yohan.webp",
+			},
+			{
+				title: "yoshi.webp",
+				headline: "Yoshi the Code Reviewer",
+				desc: [
+					"Appears the moment VS Code opens.",
+					"Sits directly on the keyboard during peak productivity.",
+					"Believes every deploy needs supervision.",
+				],
+				img: "./assets/images/yoshi.webp",
+			},
+			{
+				title: "yuki.webp",
+				headline: "Yuki the iPad Kid",
+				desc: [
+					"Currently binge-watching cartoons.",
+					"Judges plot twists intensely.",
+					"Will not be disturbed during screen time.",
+				],
+				img: "./assets/images/yuki.webp",
+			},
+			{
+				title: "yuri.webp",
+				headline: "Yuri the Unbothered Kween",
+				desc: [
+					"Too glamorous to be stressed.",
+					"Looks offended 24/7.",
+					"Serves attitude without trying.",
+				],
+				img: "./assets/images/yuri.webp",
+			},
+			{
+				title: "yvanna.webp",
+				headline: "Yvanna the Diva",
+				desc: [
+					"Overreacts to everything.",
+					"Demands attention immediately.",
+					"Would win an Oscar.",
+				],
+				img: "./assets/images/yvanna.webp",
+			},
+			{
+				title: "yves.webp",
+				headline: "Yves the Box Engineer",
+				desc: [
+					"If it fits, I sits.",
+					"Structural stability tester.",
+					"Prefers cardboard over luxury beds.",
+				],
+				img: "./assets/images/yves.webp",
+			},
+		],
+	},
+];
+
+modalConfigs.forEach((config) => {
+	const trigger = document.getElementById(config.triggerId);
+	const modal = document.getElementById(config.modalId);
+
+	const overlay = modal.querySelector(".ff-modal__overlay");
+	const dialog = modal.querySelector(".ff-modal__dialog");
+	const closeBtn = modal.querySelector(".ff-window__close");
+	const titleEl = modal.querySelector(".ff-window__title");
+	const headlineEl = modal.querySelector(".ff-headline");
+	const descEl = modal.querySelector(".ff-desc");
+	const imgEl = modal.querySelector(".ff-image");
+	const anotherBtn = modal.querySelector(".ff-another");
+
+	let lastIndex = -1;
+
+	function pickRandom() {
+		let i = Math.floor(Math.random() * config.data.length);
+		while (i === lastIndex && config.data.length > 1) {
+			i = Math.floor(Math.random() * config.data.length);
+		}
+		lastIndex = i;
+		return config.data[i];
+	}
+
+	function render(item) {
+		titleEl.textContent = item.title;
+		headlineEl.textContent = item.headline;
+
+		descEl.innerHTML = "";
+		item.desc.forEach((line) => {
+			const p = document.createElement("p");
+			p.textContent = line;
+			descEl.appendChild(p);
+		});
+
+		imgEl.src = item.img;
+	}
+
+	function open() {
+		render(pickRandom());
+		modal.classList.add("is-open");
+		document.body.classList.add("modal-open");
+		lockScroll();
+	}
+
+	function close() {
+		modal.classList.add("is-closing");
+
+		setTimeout(() => {
+			modal.classList.remove("is-open", "is-closing");
+			document.body.classList.remove("modal-open");
+			unlockScroll();
+		}, 300);
+	}
+
+	trigger.addEventListener("click", open);
+	closeBtn.addEventListener("click", close);
+	overlay.addEventListener("click", close);
+	anotherBtn.addEventListener("click", open);
+
+	document.addEventListener("keydown", (e) => {
+		if (e.key === "Escape") close();
+	});
+});
+
+function lockScroll() {
+	const scrollbarWidth =
+		window.innerWidth - document.documentElement.clientWidth;
+
+	document.documentElement.style.setProperty(
+		"--scrollbar-width",
+		`${scrollbarWidth}px`,
+	);
+
+	document.body.classList.add("modal-open");
+}
+
+function unlockScroll() {
+	document.body.classList.remove("modal-open");
+	document.documentElement.style.removeProperty("--scrollbar-width");
+}
