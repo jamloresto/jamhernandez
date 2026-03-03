@@ -5,6 +5,17 @@ window.scrollTo(0, 0);
 const toggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
+function applySavedTheme() {
+	const savedTheme = localStorage.getItem("theme");
+
+	if (savedTheme === "dark") {
+		document.body.classList.add("dark");
+	} else {
+		document.body.classList.remove("dark");
+	}
+	updateIcon();
+}
+
 function updateIcon() {
 	if (document.body.classList.contains("dark")) {
 		themeIcon.src = "assets/icons/light.svg";
@@ -14,11 +25,14 @@ function updateIcon() {
 }
 
 toggleBtn.addEventListener("click", () => {
-	document.body.classList.toggle("dark");
+	const isDark = document.body.classList.toggle("dark");
+
+	localStorage.setItem("theme", isDark ? "dark" : "light");
+
 	updateIcon();
 });
 
-updateIcon();
+applySavedTheme();
 
 // Auto year
 const yearEl = document.getElementById("year");
@@ -222,7 +236,7 @@ const modalConfigs = [
 				title: "bike.webp",
 				headline: "104KM in One Ride",
 				desc: [
-					"My longest bike ride was 104KM back when I was still living in Bataan. During the pandemic, that was officially my 'biking era.'",
+					"My longest bike ride was 104KM back when I was still working and living in Bataan. During the pandemic, that was officially my 'biking era.'",
 				],
 				img: "./assets/images/bike.webp",
 			},
@@ -262,7 +276,7 @@ const modalConfigs = [
 				title: "vikings.webp",
 				headline: "Manifested Vikings Wedding",
 				desc: [
-					"Back in 2022 while dating at Vikings MOA, I randomly said, 'Gusto ko kapag kinasal ako sa Vikings venue and reception.' Three years later… it happened.",
+					"Back in 2022 while dating at Vikings MOA, I randomly said, 'Gusto ko kapag kinasal ako sa Vikings Venue ang reception.' Three years later… it happened.",
 				],
 				img: "./assets/images/vikings.webp",
 			},
@@ -356,7 +370,25 @@ const modalConfigs = [
 	},
 ];
 
+const imageCache = new Map();
+
+function preloadImage(url) {
+	if (imageCache.has(url)) return imageCache.get(url);
+
+	const promise = new Promise((resolve, reject) => {
+		const img = new Image();
+		img.onload = () => resolve(img);
+		img.onerror = reject;
+		img.src = url;
+	});
+
+	imageCache.set(url, promise);
+	return promise;
+}
+
 modalConfigs.forEach((config) => {
+	let didPreload = false;
+
 	const trigger = document.getElementById(config.triggerId);
 	const modal = document.getElementById(config.modalId);
 
@@ -395,6 +427,11 @@ modalConfigs.forEach((config) => {
 	}
 
 	function open() {
+		if (!didPreload) {
+			didPreload = true;
+			config.data.forEach((item) => preloadImage(item.img));
+		}
+
 		render(pickRandom());
 		modal.classList.add("is-open");
 		document.body.classList.add("modal-open");
