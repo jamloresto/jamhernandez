@@ -377,7 +377,14 @@ function preloadImage(url) {
 
 	const promise = new Promise((resolve, reject) => {
 		const img = new Image();
-		img.onload = () => resolve(img);
+		img.onload = async () => {
+			if (img.decode) {
+				try {
+					await img.decode();
+				} catch {}
+			}
+			resolve(img);
+		};
 		img.onerror = reject;
 		img.src = url;
 	});
@@ -393,13 +400,13 @@ modalConfigs.forEach((config) => {
 	const modal = document.getElementById(config.modalId);
 
 	const overlay = modal.querySelector(".ff-modal__overlay");
-	const dialog = modal.querySelector(".ff-modal__dialog");
 	const closeBtn = modal.querySelector(".ff-window__close");
 	const titleEl = modal.querySelector(".ff-window__title");
 	const headlineEl = modal.querySelector(".ff-headline");
 	const descEl = modal.querySelector(".ff-desc");
 	const imgEl = modal.querySelector(".ff-image");
 	const anotherBtn = modal.querySelector(".ff-another");
+	const mediaEl = modal.querySelector(".ff-window__media");
 
 	let lastIndex = -1;
 
@@ -412,30 +419,41 @@ modalConfigs.forEach((config) => {
 		return config.data[i];
 	}
 
-	function render(item) {
-		titleEl.textContent = item.title;
-		headlineEl.textContent = item.headline;
+	async function render(item) {
+		mediaEl.classList.add("is-loading");
 
-		descEl.innerHTML = "";
-		item.desc.forEach((line) => {
-			const p = document.createElement("p");
-			p.textContent = line;
-			descEl.appendChild(p);
-		});
+		try {
+			await preloadImage(item.img);
 
-		imgEl.src = item.img;
+			imgEl.src = item.img;
+
+			titleEl.textContent = item.title;
+			headlineEl.textContent = item.headline;
+
+			descEl.innerHTML = "";
+			item.desc.forEach((line) => {
+				const p = document.createElement("p");
+				p.textContent = line;
+				descEl.appendChild(p);
+			});
+		} finally {
+			requestAnimationFrame(() => {
+				mediaEl.classList.remove("is-loading");
+			});
+		}
 	}
 
-	function open() {
+	async function open() {
 		if (!didPreload) {
 			didPreload = true;
 			config.data.forEach((item) => preloadImage(item.img));
 		}
 
-		render(pickRandom());
 		modal.classList.add("is-open");
-		document.body.classList.add("modal-open");
 		lockScroll();
+
+		const item = pickRandom();
+		await render(item);
 	}
 
 	function close() {
