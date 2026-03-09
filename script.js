@@ -1,4 +1,6 @@
-window.history.scrollRestoration = "manual";
+if ("scrollRestoration" in history) {
+	history.scrollRestoration = "manual";
+}
 window.scrollTo(0, 0);
 
 // Color theme
@@ -17,6 +19,8 @@ function applySavedTheme() {
 }
 
 function updateIcon() {
+	if (!themeIcon) return;
+
 	if (document.body.classList.contains("dark")) {
 		themeIcon.src = "assets/icons/light.svg";
 	} else {
@@ -24,35 +28,41 @@ function updateIcon() {
 	}
 }
 
-toggleBtn.addEventListener("click", () => {
-	const isDark = document.body.classList.toggle("dark");
+if (toggleBtn && themeIcon) {
+	toggleBtn.addEventListener("click", () => {
+		const isDark = document.body.classList.toggle("dark");
 
-	localStorage.setItem("theme", isDark ? "dark" : "light");
+		localStorage.setItem("theme", isDark ? "dark" : "light");
 
-	updateIcon();
-});
+		updateIcon();
+	});
+}
 
 applySavedTheme();
 
 // Auto year
 const yearEl = document.getElementById("year");
 
-yearEl.textContent = new Date().getFullYear();
+if (yearEl) {
+	yearEl.textContent = new Date().getFullYear();
+}
 
 // Hobby cards
 const hobbyCards = document.querySelectorAll(".hobby-card");
 
-hobbyCards.forEach((card) => {
-	card.addEventListener("click", () => {
-		if (window.innerWidth <= 768) {
-			hobbyCards.forEach((c) => {
-				if (c !== card) c.classList.remove("is-flipped");
-			});
+if (hobbyCards.length) {
+	hobbyCards.forEach((card) => {
+		card.addEventListener("click", () => {
+			if (window.innerWidth <= 768) {
+				hobbyCards.forEach((c) => {
+					if (c !== card) c.classList.remove("is-flipped");
+				});
 
-			card.classList.toggle("is-flipped");
-		}
+				card.classList.toggle("is-flipped");
+			}
+		});
 	});
-});
+}
 
 // About section
 const aboutCard = document.getElementById("aboutCard");
@@ -92,9 +102,8 @@ if (aboutCard && aboutToggle && aboutMore) {
 }
 
 function introduction() {
-
 	document.body.classList.add("no-scroll");
-	
+
 	const greetings = [
 		"Hello",
 		"Kumusta",
@@ -115,6 +124,8 @@ function introduction() {
 	const page = document.getElementById("page");
 	const bar = document.getElementById("bar");
 	const wipe = document.getElementById("wipe");
+
+	if (!intro || !helloEl || !page || !bar || !wipe) return;
 
 	const FIRST_HOLD_MS = 850;
 	const START_HOLD_MS = 250;
@@ -398,6 +409,8 @@ modalConfigs.forEach((config) => {
 
 	const trigger = document.getElementById(config.triggerId);
 	const modal = document.getElementById(config.modalId);
+
+	if (!trigger || !modal) return;
 
 	const overlay = modal.querySelector(".ff-modal__overlay");
 	const closeBtn = modal.querySelector(".ff-window__close");
