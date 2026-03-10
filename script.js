@@ -138,42 +138,86 @@ function initializeHobbyCards() {
 // Initialize hobby card behavior
 initializeHobbyCards();
 
-// About section
+// ==============================
+// About Section
+// ==============================
+
 const aboutCard = document.getElementById("aboutCard");
 const aboutToggle = document.getElementById("aboutToggle");
 const aboutMore = document.getElementById("aboutMore");
 
-if (aboutCard && aboutToggle && aboutMore) {
-	const collapse = () => {
-		aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
-		requestAnimationFrame(() => {
-			aboutCard.classList.remove("is-expanded");
-			aboutToggle.textContent = "Read more";
-			aboutToggle.setAttribute("aria-expanded", "false");
-			aboutMore.style.maxHeight = "0px";
-		});
-	};
+/**
+ * Returns true when the about section is currently expanded.
+ */
+function isAboutExpanded() {
+	return aboutToggle?.getAttribute("aria-expanded") === "true";
+}
 
-	const expand = () => {
-		aboutCard.classList.add("is-expanded");
-		aboutToggle.textContent = "See less";
-		aboutToggle.setAttribute("aria-expanded", "true");
-		aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
-	};
+/**
+ * Updates the toggle button label and accessibility state.
+ */
+function updateAboutToggleState(isExpanded) {
+	aboutToggle.textContent = isExpanded ? "See less" : "Read more";
+	aboutToggle.setAttribute("aria-expanded", String(isExpanded));
+}
 
-	aboutMore.style.maxHeight = "0px";
+/**
+ * Expands the hidden content area and updates the card state.
+ */
+function expandAboutSection() {
+	aboutCard.classList.add("is-expanded");
+	updateAboutToggleState(true);
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
+}
 
-	aboutToggle.addEventListener("click", () => {
-		const expanded = aboutToggle.getAttribute("aria-expanded") === "true";
-		if (expanded) collapse();
-		else expand();
-	});
+/**
+ * Collapses the hidden content area with a smooth height transition.
+ */
+function collapseAboutSection() {
+	// Set the current height first so the transition can animate back to zero.
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
 
-	window.addEventListener("resize", () => {
-		const expanded = aboutToggle.getAttribute("aria-expanded") === "true";
-		if (expanded) aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
+	requestAnimationFrame(() => {
+		aboutCard.classList.remove("is-expanded");
+		updateAboutToggleState(false);
+		aboutMore.style.maxHeight = "0px";
 	});
 }
+
+/**
+ * Toggles the about section between expanded and collapsed states.
+ */
+function handleAboutToggle() {
+	if (isAboutExpanded()) {
+		collapseAboutSection();
+		return;
+	}
+
+	expandAboutSection();
+}
+
+/**
+ * Keeps the expanded height accurate when the viewport size changes.
+ */
+function handleAboutResize() {
+	if (!isAboutExpanded()) return;
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
+}
+
+/**
+ * Initializes the about section interaction.
+ */
+function initializeAboutSection() {
+	if (!aboutCard || !aboutToggle || !aboutMore) return;
+
+	aboutMore.style.maxHeight = "0px";
+	updateAboutToggleState(false);
+
+	aboutToggle.addEventListener("click", handleAboutToggle);
+	window.addEventListener("resize", handleAboutResize);
+}
+
+initializeAboutSection();
 
 function introduction() {
 	document.body.classList.add("no-scroll");
