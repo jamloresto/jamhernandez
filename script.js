@@ -627,9 +627,11 @@ function preloadModalImages(modalConfig) {
 	});
 }
 
-modalConfigs.forEach((config) => {
-	let didPreload = false;
+// ==============================
+// Modal Behavior
+// ==============================
 
+modalConfigs.forEach((config) => {
 	const trigger = document.getElementById(config.triggerId);
 	const modal = document.getElementById(config.modalId);
 
@@ -645,33 +647,48 @@ modalConfigs.forEach((config) => {
 	const mediaEl = modal.querySelector(".ff-window__media");
 
 	let lastIndex = -1;
+	let hasPreloadedImages = false;
 
-	function pickRandom() {
-		let i = Math.floor(Math.random() * config.data.length);
-		while (i === lastIndex && config.data.length > 1) {
-			i = Math.floor(Math.random() * config.data.length);
+	/**
+	 * Returns a random item without immediately repeating the last one.
+	 */
+	function getRandomItem() {
+		let nextIndex = Math.floor(Math.random() * config.data.length);
+
+		while (config.data.length > 1 && nextIndex === lastIndex) {
+			nextIndex = Math.floor(Math.random() * config.data.length);
 		}
-		lastIndex = i;
-		return config.data[i];
+
+		lastIndex = nextIndex;
+		return config.data[nextIndex];
 	}
 
-	async function render(item) {
+	/**
+	 * Rebuilds the description area using the current item's text lines.
+	 */
+	function renderDescription(lines) {
+		descEl.innerHTML = "";
+
+		lines.forEach((line) => {
+			const paragraph = document.createElement("p");
+			paragraph.textContent = line;
+			descEl.appendChild(paragraph);
+		});
+	}
+
+	/**
+	 * Updates the modal content after the image is ready.
+	 */
+	async function renderModalContent(item) {
 		mediaEl.classList.add("is-loading");
 
 		try {
 			await preloadImage(item.img);
 
 			imgEl.src = item.img;
-
 			titleEl.textContent = item.title;
 			headlineEl.textContent = item.headline;
-
-			descEl.innerHTML = "";
-			item.desc.forEach((line) => {
-				const p = document.createElement("p");
-				p.textContent = line;
-				descEl.appendChild(p);
-			});
+			renderDescription(item.desc);
 		} finally {
 			requestAnimationFrame(() => {
 				mediaEl.classList.remove("is-loading");
@@ -679,37 +696,68 @@ modalConfigs.forEach((config) => {
 		}
 	}
 
-	async function open() {
-		if (!didPreload) {
-			didPreload = true;
-			config.data.forEach((item) => preloadImage(item.img));
-		}
+	/**
+	 * Preloads all images for this modal the first time it is opened.
+	 */
+	function preloadModalImagesOnce() {
+		if (hasPreloadedImages) return;
+
+		hasPreloadedImages = true;
+		preloadModalImages(config);
+	}
+
+	/**
+	 * Opens the modal and renders a random item.
+	 */
+	async function openModal() {
+		preloadModalImagesOnce();
 
 		modal.classList.add("is-open");
 		lockScroll();
 
-		const item = pickRandom();
-		await render(item);
+		const item = getRandomItem();
+		await renderModalContent(item);
 	}
 
-	function close() {
+	/**
+	 * Starts the close animation, then resets the modal state.
+	 */
+	function closeModal() {
+		if (!modal.classList.contains("is-open")) return;
+
 		modal.classList.add("is-closing");
 
 		setTimeout(() => {
 			modal.classList.remove("is-open", "is-closing");
-			document.body.classList.remove("modal-open");
 			unlockScroll();
 		}, 300);
 	}
 
-	trigger.addEventListener("click", open);
-	closeBtn.addEventListener("click", close);
-	overlay.addEventListener("click", close);
-	anotherBtn.addEventListener("click", open);
+	/**
+	 * Closes the modal only when Escape is pressed while this modal is open.
+	 */
+	function handleEscapeKey(event) {
+		if (event.key !== "Escape") return;
+		if (!modal.classList.contains("is-open")) return;
 
-	document.addEventListener("keydown", (e) => {
-		if (e.key === "Escape") close();
-	});
+		closeModal();
+	}
+
+	trigger.addEventListener("click", openModal);
+
+	if (closeBtn) {
+		closeBtn.addEventListener("click", closeModal);
+	}
+
+	if (overlay) {
+		overlay.addEventListener("click", closeModal);
+	}
+
+	if (anotherBtn) {
+		anotherBtn.addEventListener("click", openModal);
+	}
+
+	document.addEventListener("keydown", handleEscapeKey);
 });
 
 function lockScroll() {
