@@ -423,7 +423,10 @@ function introduction() {
 
 introduction();
 
-// Fun facts Section
+// ==============================
+// Fun Facts and Furry Friends Data
+// ==============================
+
 const modalConfigs = [
 	{
 		triggerId: "surpriseBtn",
@@ -567,27 +570,61 @@ const modalConfigs = [
 	},
 ];
 
+// ==============================
+// Image Preload Utilities
+// ==============================
+
 const imageCache = new Map();
 
-function preloadImage(url) {
-	if (imageCache.has(url)) return imageCache.get(url);
-
-	const promise = new Promise((resolve, reject) => {
+/**
+ * Creates an image element and resolves once the file is fully ready.
+ */
+function loadImage(url) {
+	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = async () => {
+			// Decode the image when supported to reduce visible loading flicker.
 			if (img.decode) {
 				try {
 					await img.decode();
-				} catch {}
+				} catch {
+					// Ignore decode errors and continue with the loaded image.
+				}
 			}
+
 			resolve(img);
 		};
-		img.onerror = reject;
+
+		img.onerror = () => {
+			reject(new Error(`Failed to load image: ${url}`));
+		};
+
 		img.src = url;
 	});
+}
 
-	imageCache.set(url, promise);
-	return promise;
+/**
+ * Returns a cached preload promise when available.
+ * This avoids loading the same image more than once.
+ */
+function preloadImage(url) {
+	if (imageCache.has(url)) {
+		return imageCache.get(url);
+	}
+
+	const imagePromise = loadImage(url);
+	imageCache.set(url, imagePromise);
+
+	return imagePromise;
+}
+
+/**
+ * Starts preloading all images for one modal config.
+ */
+function preloadModalImages(modalConfig) {
+	modalConfig.data.forEach((item) => {
+		preloadImage(item.img);
+	});
 }
 
 modalConfigs.forEach((config) => {
