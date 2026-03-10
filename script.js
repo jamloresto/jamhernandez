@@ -1,51 +1,102 @@
+// ==============================
+// Page startup behavior
+// ==============================
+
+// Prevent the browser from restoring the previous scroll position on refresh.
 if ("scrollRestoration" in history) {
 	history.scrollRestoration = "manual";
 }
+
+// Always start at the top of the page on load.
 window.scrollTo(0, 0);
 
-// Color theme
+// ==============================
+// Theme handling
+// ==============================
+
+const THEME_STORAGE_KEY = "theme";
+const DARK_THEME_CLASS = "dark";
+
 const toggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
-function applySavedTheme() {
-	const savedTheme = localStorage.getItem("theme");
-
-	if (savedTheme === "dark") {
-		document.body.classList.add("dark");
-	} else {
-		document.body.classList.remove("dark");
-	}
-	updateIcon();
+/**
+ * Returns the saved theme from localStorage.
+ * Falls back to "light" when no saved value exists.
+ */
+function getSavedTheme() {
+	return localStorage.getItem(THEME_STORAGE_KEY) || "light";
 }
 
-function updateIcon() {
+/**
+ * Saves the selected theme in localStorage.
+ * @param {"light" | "dark"} theme
+ */
+function saveTheme(theme) {
+	localStorage.setItem(THEME_STORAGE_KEY, theme);
+}
+
+/**
+ * Applies the theme class to the document body.
+ * @param {"light" | "dark"} theme
+ */
+function setTheme(theme) {
+	document.body.classList.toggle(DARK_THEME_CLASS, theme === "dark");
+	updateThemeIcon();
+}
+
+/**
+ * Updates the toggle icon based on the active theme.
+ */
+function updateThemeIcon() {
 	if (!themeIcon) return;
 
-	if (document.body.classList.contains("dark")) {
-		themeIcon.src = "assets/icons/light.svg";
-	} else {
-		themeIcon.src = "assets/icons/dark.svg";
-	}
+	const isDarkMode = document.body.classList.contains(DARK_THEME_CLASS);
+	themeIcon.src = isDarkMode
+		? "assets/icons/light.svg"
+		: "assets/icons/dark.svg";
 }
 
-if (toggleBtn && themeIcon) {
-	toggleBtn.addEventListener("click", () => {
-		const isDark = document.body.classList.toggle("dark");
-
-		localStorage.setItem("theme", isDark ? "dark" : "light");
-
-		updateIcon();
-	});
+/**
+ * Toggles between light and dark theme,
+ * then persists the selected theme.
+ */
+function handleThemeToggle() {
+	const isDarkMode = document.body.classList.toggle(DARK_THEME_CLASS);
+	saveTheme(isDarkMode ? "dark" : "light");
+	updateThemeIcon();
 }
 
-applySavedTheme();
+/**
+ * Loads and applies the previously saved theme.
+ */
+function initializeTheme() {
+	const savedTheme = getSavedTheme();
+	setTheme(savedTheme);
+}
 
-// Auto year
+// Only attach the click handler if the toggle button exists.
+if (toggleBtn) {
+	toggleBtn.addEventListener("click", handleThemeToggle);
+}
+
+initializeTheme();
+
+// ==============================
+// Footer year
+// ==============================
+
 const yearEl = document.getElementById("year");
 
-if (yearEl) {
+/**
+ * Displays the current year in the target element.
+ */
+function initializeYear() {
+	if (!yearEl) return;
 	yearEl.textContent = new Date().getFullYear();
 }
+
+initializeYear();
 
 // Hobby cards
 const hobbyCards = document.querySelectorAll(".hobby-card");
