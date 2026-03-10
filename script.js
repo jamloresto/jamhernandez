@@ -98,22 +98,45 @@ function initializeYear() {
 
 initializeYear();
 
-// Hobby cards
+// ==============================
+// Hobby Cards Interaction
+// ==============================
+
+// Select all hobby cards on the page
 const hobbyCards = document.querySelectorAll(".hobby-card");
 
-if (hobbyCards.length) {
-	hobbyCards.forEach((card) => {
-		card.addEventListener("click", () => {
-			if (window.innerWidth <= 768) {
-				hobbyCards.forEach((c) => {
-					if (c !== card) c.classList.remove("is-flipped");
-				});
+/**
+ * Flips the selected card.
+ * On mobile, only one card should stay flipped at a time.
+ */
+function handleHobbyCardClick(clickedCard) {
+	// This interaction is only intended for small screens
+	if (window.innerWidth > 768) return;
 
-				card.classList.toggle("is-flipped");
-			}
-		});
+	hobbyCards.forEach((card) => {
+		// Reset other cards so only one remains flipped
+		if (card !== clickedCard) {
+			card.classList.remove("is-flipped");
+		}
+	});
+
+	// Toggle the clicked card
+	clickedCard.classList.toggle("is-flipped");
+}
+
+/**
+ * Attaches click listeners to all hobby cards.
+ */
+function initializeHobbyCards() {
+	if (!hobbyCards.length) return;
+
+	hobbyCards.forEach((card) => {
+		card.addEventListener("click", () => handleHobbyCardClick(card));
 	});
 }
+
+// Initialize hobby card behavior
+initializeHobbyCards();
 
 // About section
 const aboutCard = document.getElementById("aboutCard");
