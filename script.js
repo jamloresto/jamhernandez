@@ -225,7 +225,7 @@ initializeAboutSection();
 
 function introduction() {
 	const intro = document.getElementById("intro");
-	const helloEl = document.getElementById("helloEl");
+	const helloEl = document.getElementById("helloText");
 	const page = document.getElementById("page");
 	const progressBar = document.getElementById("bar");
 	const wipe = document.getElementById("wipe");
