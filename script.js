@@ -292,7 +292,6 @@ function introduction() {
 	 */
 	function unlockIntroScroll() {
 		document.body.classList.remove("no-scroll");
-		document.body.style.overflow = "auto";
 	}
 
 	/**
@@ -760,9 +759,23 @@ modalConfigs.forEach((config) => {
 	document.addEventListener("keydown", handleEscapeKey);
 });
 
+// ==============================
+// Scroll Lock Helpers
+// ==============================
+
+/**
+ * Returns the width of the browser scrollbar.
+ * This is used to avoid layout shift when page scrolling is locked.
+ */
+function getScrollbarWidth() {
+	return window.innerWidth - document.documentElement.clientWidth;
+}
+
+/**
+ * Locks page scrolling and stores the scrollbar width in a CSS variable.
+ */
 function lockScroll() {
-	const scrollbarWidth =
-		window.innerWidth - document.documentElement.clientWidth;
+	const scrollbarWidth = getScrollbarWidth();
 
 	document.documentElement.style.setProperty(
 		"--scrollbar-width",
@@ -772,6 +785,9 @@ function lockScroll() {
 	document.body.classList.add("modal-open");
 }
 
+/**
+ * Restores normal page scrolling and removes the temporary CSS variable.
+ */
 function unlockScroll() {
 	document.body.classList.remove("modal-open");
 	document.documentElement.style.removeProperty("--scrollbar-width");
