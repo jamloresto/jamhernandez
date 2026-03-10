@@ -1,108 +1,251 @@
+// ==============================
+// Page startup behavior
+// ==============================
+
+// Prevent the browser from restoring the previous scroll position on refresh.
 if ("scrollRestoration" in history) {
 	history.scrollRestoration = "manual";
 }
+
+// Always start at the top of the page on load.
 window.scrollTo(0, 0);
 
-// Color theme
+// ==============================
+// Theme handling
+// ==============================
+
+const THEME_STORAGE_KEY = "theme";
+const DARK_THEME_CLASS = "dark";
+
 const toggleBtn = document.getElementById("themeToggle");
 const themeIcon = document.getElementById("themeIcon");
 
-function applySavedTheme() {
-	const savedTheme = localStorage.getItem("theme");
-
-	if (savedTheme === "dark") {
-		document.body.classList.add("dark");
-	} else {
-		document.body.classList.remove("dark");
-	}
-	updateIcon();
+/**
+ * Returns the saved theme from localStorage.
+ * Falls back to "light" when no saved value exists.
+ */
+function getSavedTheme() {
+	return localStorage.getItem(THEME_STORAGE_KEY) || "light";
 }
 
-function updateIcon() {
+/**
+ * Saves the selected theme in localStorage.
+ * @param {"light" | "dark"} theme
+ */
+function saveTheme(theme) {
+	localStorage.setItem(THEME_STORAGE_KEY, theme);
+}
+
+/**
+ * Applies the theme class to the document body.
+ * @param {"light" | "dark"} theme
+ */
+function setTheme(theme) {
+	document.body.classList.toggle(DARK_THEME_CLASS, theme === "dark");
+	updateThemeIcon();
+}
+
+/**
+ * Updates the toggle icon based on the active theme.
+ */
+function updateThemeIcon() {
 	if (!themeIcon) return;
 
-	if (document.body.classList.contains("dark")) {
-		themeIcon.src = "assets/icons/light.svg";
-	} else {
-		themeIcon.src = "assets/icons/dark.svg";
-	}
+	const isDarkMode = document.body.classList.contains(DARK_THEME_CLASS);
+	themeIcon.src = isDarkMode
+		? "assets/icons/light.svg"
+		: "assets/icons/dark.svg";
 }
 
-if (toggleBtn && themeIcon) {
-	toggleBtn.addEventListener("click", () => {
-		const isDark = document.body.classList.toggle("dark");
-
-		localStorage.setItem("theme", isDark ? "dark" : "light");
-
-		updateIcon();
-	});
+/**
+ * Toggles between light and dark theme,
+ * then persists the selected theme.
+ */
+function handleThemeToggle() {
+	const isDarkMode = document.body.classList.toggle(DARK_THEME_CLASS);
+	saveTheme(isDarkMode ? "dark" : "light");
+	updateThemeIcon();
 }
 
-applySavedTheme();
+/**
+ * Loads and applies the previously saved theme.
+ */
+function initializeTheme() {
+	const savedTheme = getSavedTheme();
+	setTheme(savedTheme);
+}
 
-// Auto year
+// Only attach the click handler if the toggle button exists.
+if (toggleBtn) {
+	toggleBtn.addEventListener("click", handleThemeToggle);
+}
+
+initializeTheme();
+
+// ==============================
+// Footer year
+// ==============================
+
 const yearEl = document.getElementById("year");
 
-if (yearEl) {
+/**
+ * Displays the current year in the target element.
+ */
+function initializeYear() {
+	if (!yearEl) return;
 	yearEl.textContent = new Date().getFullYear();
 }
 
-// Hobby cards
+initializeYear();
+
+// ==============================
+// Hobby Cards Interaction
+// ==============================
+
+// Select all hobby cards on the page
 const hobbyCards = document.querySelectorAll(".hobby-card");
 
-if (hobbyCards.length) {
-	hobbyCards.forEach((card) => {
-		card.addEventListener("click", () => {
-			if (window.innerWidth <= 768) {
-				hobbyCards.forEach((c) => {
-					if (c !== card) c.classList.remove("is-flipped");
-				});
+/**
+ * Flips the selected card.
+ * On mobile, only one card should stay flipped at a time.
+ */
+function handleHobbyCardClick(clickedCard) {
+	// This interaction is only intended for small screens
+	if (window.innerWidth > 768) return;
 
-				card.classList.toggle("is-flipped");
-			}
-		});
+	hobbyCards.forEach((card) => {
+		// Reset other cards so only one remains flipped
+		if (card !== clickedCard) {
+			card.classList.remove("is-flipped");
+		}
+	});
+
+	// Toggle the clicked card
+	clickedCard.classList.toggle("is-flipped");
+}
+
+/**
+ * Attaches click listeners to all hobby cards.
+ */
+function initializeHobbyCards() {
+	if (!hobbyCards.length) return;
+
+	hobbyCards.forEach((card) => {
+		card.addEventListener("click", () => handleHobbyCardClick(card));
 	});
 }
 
-// About section
+// Initialize hobby card behavior
+initializeHobbyCards();
+
+// ==============================
+// About Section
+// ==============================
+
 const aboutCard = document.getElementById("aboutCard");
 const aboutToggle = document.getElementById("aboutToggle");
 const aboutMore = document.getElementById("aboutMore");
 
-if (aboutCard && aboutToggle && aboutMore) {
-	const collapse = () => {
-		aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
-		requestAnimationFrame(() => {
-			aboutCard.classList.remove("is-expanded");
-			aboutToggle.textContent = "Read more";
-			aboutToggle.setAttribute("aria-expanded", "false");
-			aboutMore.style.maxHeight = "0px";
-		});
-	};
+/**
+ * Returns true when the about section is currently expanded.
+ */
+function isAboutExpanded() {
+	return aboutToggle?.getAttribute("aria-expanded") === "true";
+}
 
-	const expand = () => {
-		aboutCard.classList.add("is-expanded");
-		aboutToggle.textContent = "See less";
-		aboutToggle.setAttribute("aria-expanded", "true");
-		aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
-	};
+/**
+ * Updates the toggle button label and accessibility state.
+ */
+function updateAboutToggleState(isExpanded) {
+	aboutToggle.textContent = isExpanded ? "See less" : "Read more";
+	aboutToggle.setAttribute("aria-expanded", String(isExpanded));
+}
 
-	aboutMore.style.maxHeight = "0px";
+/**
+ * Expands the hidden content area and updates the card state.
+ */
+function expandAboutSection() {
+	aboutCard.classList.add("is-expanded");
+	updateAboutToggleState(true);
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
+}
 
-	aboutToggle.addEventListener("click", () => {
-		const expanded = aboutToggle.getAttribute("aria-expanded") === "true";
-		if (expanded) collapse();
-		else expand();
-	});
+/**
+ * Collapses the hidden content area with a smooth height transition.
+ */
+function collapseAboutSection() {
+	// Set the current height first so the transition can animate back to zero.
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
 
-	window.addEventListener("resize", () => {
-		const expanded = aboutToggle.getAttribute("aria-expanded") === "true";
-		if (expanded) aboutMore.style.maxHeight = aboutMore.scrollHeight + "px";
+	requestAnimationFrame(() => {
+		aboutCard.classList.remove("is-expanded");
+		updateAboutToggleState(false);
+		aboutMore.style.maxHeight = "0px";
 	});
 }
 
+/**
+ * Toggles the about section between expanded and collapsed states.
+ */
+function handleAboutToggle() {
+	if (isAboutExpanded()) {
+		collapseAboutSection();
+		return;
+	}
+
+	expandAboutSection();
+}
+
+/**
+ * Keeps the expanded height accurate when the viewport size changes.
+ */
+function handleAboutResize() {
+	if (!isAboutExpanded()) return;
+	aboutMore.style.maxHeight = `${aboutMore.scrollHeight}px`;
+}
+
+/**
+ * Initializes the about section interaction.
+ */
+function initializeAboutSection() {
+	if (!aboutCard || !aboutToggle || !aboutMore) return;
+
+	aboutMore.style.maxHeight = "0px";
+	updateAboutToggleState(false);
+
+	aboutToggle.addEventListener("click", handleAboutToggle);
+	window.addEventListener("resize", handleAboutResize);
+}
+
+initializeAboutSection();
+
+// ==============================
+// Introduction Sequence
+// ==============================
+
 function introduction() {
-	document.body.classList.add("no-scroll");
+	const intro = document.getElementById("intro");
+	const helloEl = document.getElementById("helloText");
+	const page = document.getElementById("page");
+	const progressBar = document.getElementById("bar");
+	const wipe = document.getElementById("wipe");
+	const header = document.querySelector(".site-header");
+	const hero = document.querySelector(".hero");
+	const hobbiesSection = document.querySelector(".section-hobbies");
+
+	// Stop here if any required intro element is missing.
+	if (
+		!intro ||
+		!helloEl ||
+		!page ||
+		!progressBar ||
+		!wipe ||
+		!header ||
+		!hero ||
+		!hobbiesSection
+	) {
+		return;
+	}
 
 	const greetings = [
 		"Hello",
@@ -119,44 +262,72 @@ function introduction() {
 		"Salam",
 	];
 
-	const intro = document.getElementById("intro");
-	const helloEl = document.getElementById("helloText");
-	const page = document.getElementById("page");
-	const bar = document.getElementById("bar");
-	const wipe = document.getElementById("wipe");
+	const INTRO_TIMING = {
+		firstHold: 850,
+		startHold: 250,
+		minHold: 80,
+		holdDecay: 0.78,
+		startGap: 40,
+		minGap: 40,
+		gapDecay: 0.8,
+		out: 0,
+		finalPause: 220,
+		wipe: 3600,
+		headerRevealDelay: 200,
+		heroRevealDelay: 350,
+		hobbiesRevealDelay: 1000,
+	};
 
-	if (!intro || !helloEl || !page || !bar || !wipe) return;
+	let currentGreetingIndex = 0;
 
-	const FIRST_HOLD_MS = 850;
-	const START_HOLD_MS = 250;
-	const MIN_HOLD_MS = 80;
-	const HOLD_DECAY = 0.78;
-	const START_GAP_MS = 40;
-	const MIN_GAP_MS = 40;
-	const GAP_DECAY = 0.8;
-	const OUT_MS = 0;
-	const TOTAL = greetings.length;
+	/**
+	 * Prevents scrolling while the intro is playing.
+	 */
+	function lockIntroScroll() {
+		document.body.classList.add("no-scroll");
+	}
 
-	let idx = 0;
+	/**
+	 * Restores page scrolling after the intro finishes.
+	 */
+	function unlockIntroScroll() {
+		document.body.classList.remove("no-scroll");
+	}
 
-	function getHoldMs(i) {
-		if (i === 0) return FIRST_HOLD_MS;
+	/**
+	 * Returns the hold duration for the current greeting.
+	 * The first greeting stays longer, then speeds up gradually.
+	 */
+	function getHoldDuration(i) {
+		if (i === 0) return INTRO_TIMING.firstHold;
+
 		const step = i - 1;
 		return Math.max(
-			MIN_HOLD_MS,
-			Math.round(START_HOLD_MS * Math.pow(HOLD_DECAY, step)),
+			INTRO_TIMING.minHold,
+			Math.round(
+				INTRO_TIMING.startHold * Math.pow(INTRO_TIMING.holdDecay, step),
+			),
 		);
 	}
 
-	function getGapMs(i) {
+	/**
+	 * Returns the gap before the next greeting appears.
+	 */
+	function getGapDuration(i) {
 		if (i === 0) return 120;
+
 		const step = i - 1;
 		return Math.max(
-			MIN_GAP_MS,
-			Math.round(START_GAP_MS * Math.pow(GAP_DECAY, step)),
+			INTRO_TIMING.minGap,
+			Math.round(
+				INTRO_TIMING.startGap * Math.pow(INTRO_TIMING.gapDecay, step),
+			),
 		);
 	}
 
+	/**
+	 * Displays the active greeting with the intro animation class.
+	 */
 	function showGreeting(text) {
 		helloEl.textContent = text;
 		helloEl.classList.remove("is-out");
@@ -164,80 +335,97 @@ function introduction() {
 		helloEl.classList.add("is-in");
 	}
 
+	/**
+	 * Starts the exit animation for the current greeting.
+	 */
 	function hideGreeting() {
 		helloEl.classList.remove("is-in");
 		helloEl.classList.add("is-out");
 	}
 
-	function setProgress(i) {
-		const pct = Math.round(((i + 1) / TOTAL) * 100);
-		bar.style.width = pct + "%";
+	/**
+	 * Updates the progress bar based on the current greeting index.
+	 */
+	function updateProgress(i) {
+		const percentage = Math.round(((i + 1) / greetings.length) * 100);
+		progressBar.style.width = `${percentage}%`;
 	}
 
-	async function runIntro() {
-		showGreeting(greetings[idx]);
-		setProgress(idx);
+	/**
+	 * Reveals the main page content after the intro wipe begins.
+	 */
+	function revealMainContent() {
+		page.classList.add("is-visible");
+		intro.style.display = "none";
 
-		while (idx < TOTAL - 1) {
-			await wait(getHoldMs(idx));
-			hideGreeting();
-			await wait(OUT_MS + getGapMs(idx));
-			idx++;
-			showGreeting(greetings[idx]);
-			setProgress(idx);
-		}
+		setTimeout(() => {
+			header.classList.remove("is-hidden");
+			header.classList.add("reveal");
+		}, INTRO_TIMING.headerRevealDelay);
 
-		await wait(getHoldMs(idx) + 220);
-		transitionOut();
+		setTimeout(() => {
+			hero.classList.add("reveal");
+		}, INTRO_TIMING.heroRevealDelay);
+
+		setTimeout(() => {
+			hobbiesSection.classList.remove("is-hidden");
+			hobbiesSection.classList.add("reveal");
+		}, INTRO_TIMING.hobbiesRevealDelay);
+
+		unlockIntroScroll();
 	}
 
-	function revealHero() {
-		const hero = document.querySelector(".hero");
-		hero.classList.add("reveal");
-	}
-
-	const WIPE_MS = 3600;
-
+	/**
+	 * Plays the wipe transition, then swaps the intro with the page content.
+	 */
 	function transitionOut() {
 		wipe.classList.remove("animate");
 		void wipe.offsetWidth;
 		wipe.classList.add("animate");
 
 		setTimeout(() => {
-			page.classList.add("is-visible");
-			intro.style.display = "none";
-			document.body.style.overflow = "auto";
-
-			setTimeout(() => {
-				const header = document.querySelector(".site-header");
-				header.classList.remove("is-hidden");
-				header.classList.add("reveal");
-			}, 200);
-
-			setTimeout(() => {
-				revealHero();
-			}, 350);
-
-			setTimeout(() => {
-				const hobbies = document.querySelector(".section-hobbies");
-				hobbies.classList.remove("is-hidden");
-				hobbies.classList.add("reveal");
-			}, 1000);
-
-			document.body.classList.remove("no-scroll");
-		}, WIPE_MS * 0.35);
+			revealMainContent();
+		}, INTRO_TIMING.wipe * 0.35);
 	}
 
+	/**
+	 * Utility helper for timed pauses inside the intro sequence.
+	 */
 	function wait(ms) {
 		return new Promise((r) => setTimeout(r, ms));
 	}
 
-	runIntro();
+	/**
+	 * Runs the full greeting sequence from start to finish.
+	 */
+	async function runIntroSequence() {
+		showGreeting(greetings[currentGreetingIndex]);
+		updateProgress(currentGreetingIndex);
+
+		while (currentGreetingIndex < greetings.length - 1) {
+			await wait(getHoldDuration(currentGreetingIndex));
+			hideGreeting();
+			await wait(INTRO_TIMING.out + getGapDuration(currentGreetingIndex));
+
+			currentGreetingIndex++;
+			showGreeting(greetings[currentGreetingIndex]);
+			updateProgress(currentGreetingIndex);
+		}
+
+		await wait(getHoldDuration(currentGreetingIndex) + INTRO_TIMING.finalPause);
+		transitionOut();
+	}
+
+	lockIntroScroll();
+	runIntroSequence();
 }
 
 introduction();
 
-// Fun facts Section
+// ==============================
+// Fun Facts and Furry Friends Data
+// ==============================
+
 const modalConfigs = [
 	{
 		triggerId: "surpriseBtn",
@@ -381,32 +569,68 @@ const modalConfigs = [
 	},
 ];
 
+// ==============================
+// Image Preload Utilities
+// ==============================
+
 const imageCache = new Map();
 
-function preloadImage(url) {
-	if (imageCache.has(url)) return imageCache.get(url);
-
-	const promise = new Promise((resolve, reject) => {
+/**
+ * Creates an image element and resolves once the file is fully ready.
+ */
+function loadImage(url) {
+	return new Promise((resolve, reject) => {
 		const img = new Image();
 		img.onload = async () => {
+			// Decode the image when supported to reduce visible loading flicker.
 			if (img.decode) {
 				try {
 					await img.decode();
-				} catch {}
+				} catch {
+					// Ignore decode errors and continue with the loaded image.
+				}
 			}
+
 			resolve(img);
 		};
-		img.onerror = reject;
+
+		img.onerror = () => {
+			reject(new Error(`Failed to load image: ${url}`));
+		};
+
 		img.src = url;
 	});
-
-	imageCache.set(url, promise);
-	return promise;
 }
 
-modalConfigs.forEach((config) => {
-	let didPreload = false;
+/**
+ * Returns a cached preload promise when available.
+ * This avoids loading the same image more than once.
+ */
+function preloadImage(url) {
+	if (imageCache.has(url)) {
+		return imageCache.get(url);
+	}
 
+	const imagePromise = loadImage(url);
+	imageCache.set(url, imagePromise);
+
+	return imagePromise;
+}
+
+/**
+ * Starts preloading all images for one modal config.
+ */
+function preloadModalImages(modalConfig) {
+	modalConfig.data.forEach((item) => {
+		preloadImage(item.img);
+	});
+}
+
+// ==============================
+// Modal Behavior
+// ==============================
+
+modalConfigs.forEach((config) => {
 	const trigger = document.getElementById(config.triggerId);
 	const modal = document.getElementById(config.modalId);
 
@@ -422,33 +646,48 @@ modalConfigs.forEach((config) => {
 	const mediaEl = modal.querySelector(".ff-window__media");
 
 	let lastIndex = -1;
+	let hasPreloadedImages = false;
 
-	function pickRandom() {
-		let i = Math.floor(Math.random() * config.data.length);
-		while (i === lastIndex && config.data.length > 1) {
-			i = Math.floor(Math.random() * config.data.length);
+	/**
+	 * Returns a random item without immediately repeating the last one.
+	 */
+	function getRandomItem() {
+		let nextIndex = Math.floor(Math.random() * config.data.length);
+
+		while (config.data.length > 1 && nextIndex === lastIndex) {
+			nextIndex = Math.floor(Math.random() * config.data.length);
 		}
-		lastIndex = i;
-		return config.data[i];
+
+		lastIndex = nextIndex;
+		return config.data[nextIndex];
 	}
 
-	async function render(item) {
+	/**
+	 * Rebuilds the description area using the current item's text lines.
+	 */
+	function renderDescription(lines) {
+		descEl.innerHTML = "";
+
+		lines.forEach((line) => {
+			const paragraph = document.createElement("p");
+			paragraph.textContent = line;
+			descEl.appendChild(paragraph);
+		});
+	}
+
+	/**
+	 * Updates the modal content after the image is ready.
+	 */
+	async function renderModalContent(item) {
 		mediaEl.classList.add("is-loading");
 
 		try {
 			await preloadImage(item.img);
 
 			imgEl.src = item.img;
-
 			titleEl.textContent = item.title;
 			headlineEl.textContent = item.headline;
-
-			descEl.innerHTML = "";
-			item.desc.forEach((line) => {
-				const p = document.createElement("p");
-				p.textContent = line;
-				descEl.appendChild(p);
-			});
+			renderDescription(item.desc);
 		} finally {
 			requestAnimationFrame(() => {
 				mediaEl.classList.remove("is-loading");
@@ -456,42 +695,87 @@ modalConfigs.forEach((config) => {
 		}
 	}
 
-	async function open() {
-		if (!didPreload) {
-			didPreload = true;
-			config.data.forEach((item) => preloadImage(item.img));
-		}
+	/**
+	 * Preloads all images for this modal the first time it is opened.
+	 */
+	function preloadModalImagesOnce() {
+		if (hasPreloadedImages) return;
+
+		hasPreloadedImages = true;
+		preloadModalImages(config);
+	}
+
+	/**
+	 * Opens the modal and renders a random item.
+	 */
+	async function openModal() {
+		preloadModalImagesOnce();
 
 		modal.classList.add("is-open");
 		lockScroll();
 
-		const item = pickRandom();
-		await render(item);
+		const item = getRandomItem();
+		await renderModalContent(item);
 	}
 
-	function close() {
+	/**
+	 * Starts the close animation, then resets the modal state.
+	 */
+	function closeModal() {
+		if (!modal.classList.contains("is-open")) return;
+
 		modal.classList.add("is-closing");
 
 		setTimeout(() => {
 			modal.classList.remove("is-open", "is-closing");
-			document.body.classList.remove("modal-open");
 			unlockScroll();
 		}, 300);
 	}
 
-	trigger.addEventListener("click", open);
-	closeBtn.addEventListener("click", close);
-	overlay.addEventListener("click", close);
-	anotherBtn.addEventListener("click", open);
+	/**
+	 * Closes the modal only when Escape is pressed while this modal is open.
+	 */
+	function handleEscapeKey(event) {
+		if (event.key !== "Escape") return;
+		if (!modal.classList.contains("is-open")) return;
 
-	document.addEventListener("keydown", (e) => {
-		if (e.key === "Escape") close();
-	});
+		closeModal();
+	}
+
+	trigger.addEventListener("click", openModal);
+
+	if (closeBtn) {
+		closeBtn.addEventListener("click", closeModal);
+	}
+
+	if (overlay) {
+		overlay.addEventListener("click", closeModal);
+	}
+
+	if (anotherBtn) {
+		anotherBtn.addEventListener("click", openModal);
+	}
+
+	document.addEventListener("keydown", handleEscapeKey);
 });
 
+// ==============================
+// Scroll Lock Helpers
+// ==============================
+
+/**
+ * Returns the width of the browser scrollbar.
+ * This is used to avoid layout shift when page scrolling is locked.
+ */
+function getScrollbarWidth() {
+	return window.innerWidth - document.documentElement.clientWidth;
+}
+
+/**
+ * Locks page scrolling and stores the scrollbar width in a CSS variable.
+ */
 function lockScroll() {
-	const scrollbarWidth =
-		window.innerWidth - document.documentElement.clientWidth;
+	const scrollbarWidth = getScrollbarWidth();
 
 	document.documentElement.style.setProperty(
 		"--scrollbar-width",
@@ -501,6 +785,9 @@ function lockScroll() {
 	document.body.classList.add("modal-open");
 }
 
+/**
+ * Restores normal page scrolling and removes the temporary CSS variable.
+ */
 function unlockScroll() {
 	document.body.classList.remove("modal-open");
 	document.documentElement.style.removeProperty("--scrollbar-width");

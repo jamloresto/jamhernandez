@@ -103,6 +103,11 @@ body.no-scroll {
   height: 100vh;
 }
 
+body.modal-open {
+	overflow: hidden;
+	padding-right: var(--scrollbar-width, 0px);
+}
+
 /* =========================================
    BASE TYPOGRAPHY
 ========================================= */
