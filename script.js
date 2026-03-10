@@ -219,8 +219,33 @@ function initializeAboutSection() {
 
 initializeAboutSection();
 
+// ==============================
+// Introduction Sequence
+// ==============================
+
 function introduction() {
-	document.body.classList.add("no-scroll");
+	const intro = document.getElementById("intro");
+	const helloEl = document.getElementById("helloEl");
+	const page = document.getElementById("page");
+	const progressBar = document.getElementById("bar");
+	const wipe = document.getElementById("wipe");
+	const header = document.querySelector(".site-header");
+	const hero = document.querySelector(".hero");
+	const hobbiesSection = document.querySelector(".section-hobbies");
+
+	// Stop here if any required intro element is missing.
+	if (
+		!intro ||
+		!helloEl ||
+		!page ||
+		!progressBar ||
+		!wipe ||
+		!header ||
+		!hero ||
+		!hobbiesSection
+	) {
+		return;
+	}
 
 	const greetings = [
 		"Hello",
@@ -237,44 +262,73 @@ function introduction() {
 		"Salam",
 	];
 
-	const intro = document.getElementById("intro");
-	const helloEl = document.getElementById("helloText");
-	const page = document.getElementById("page");
-	const bar = document.getElementById("bar");
-	const wipe = document.getElementById("wipe");
+	const INTRO_TIMING = {
+		firstHold: 850,
+		startHold: 250,
+		minHold: 80,
+		holdDecay: 0.78,
+		startGap: 40,
+		minGap: 40,
+		gapDecay: 0.8,
+		out: 0,
+		finalPause: 220,
+		wipe: 3600,
+		headerRevealDelay: 200,
+		heroRevealDelay: 350,
+		hobbiesRevealDelay: 1000,
+	};
 
-	if (!intro || !helloEl || !page || !bar || !wipe) return;
+	let currentGreetingIndex = 0;
 
-	const FIRST_HOLD_MS = 850;
-	const START_HOLD_MS = 250;
-	const MIN_HOLD_MS = 80;
-	const HOLD_DECAY = 0.78;
-	const START_GAP_MS = 40;
-	const MIN_GAP_MS = 40;
-	const GAP_DECAY = 0.8;
-	const OUT_MS = 0;
-	const TOTAL = greetings.length;
+	/**
+	 * Prevents scrolling while the intro is playing.
+	 */
+	function lockIntroScroll() {
+		document.body.classList.add("no-scroll");
+	}
 
-	let idx = 0;
+	/**
+	 * Restores page scrolling after the intro finishes.
+	 */
+	function unlockIntroScroll() {
+		document.body.classList.remove("no-scroll");
+		document.body.style.overflow = "auto";
+	}
 
-	function getHoldMs(i) {
-		if (i === 0) return FIRST_HOLD_MS;
+	/**
+	 * Returns the hold duration for the current greeting.
+	 * The first greeting stays longer, then speeds up gradually.
+	 */
+	function getHoldDuration(i) {
+		if (i === 0) return INTRO_TIMING.firstHold;
+
 		const step = i - 1;
 		return Math.max(
-			MIN_HOLD_MS,
-			Math.round(START_HOLD_MS * Math.pow(HOLD_DECAY, step)),
+			INTRO_TIMING.minHold,
+			Math.round(
+				INTRO_TIMING.startHold * Math.pow(INTRO_TIMING.holdDecay, step),
+			),
 		);
 	}
 
-	function getGapMs(i) {
+	/**
+	 * Returns the gap before the next greeting appears.
+	 */
+	function getGapDuration(i) {
 		if (i === 0) return 120;
+
 		const step = i - 1;
 		return Math.max(
-			MIN_GAP_MS,
-			Math.round(START_GAP_MS * Math.pow(GAP_DECAY, step)),
+			INTRO_TIMING.minGap,
+			Math.round(
+				INTRO_TIMING.startGap * Math.pow(INTRO_TIMING.gapDecay, step),
+			),
 		);
 	}
 
+	/**
+	 * Displays the active greeting with the intro animation class.
+	 */
 	function showGreeting(text) {
 		helloEl.textContent = text;
 		helloEl.classList.remove("is-out");
@@ -282,75 +336,89 @@ function introduction() {
 		helloEl.classList.add("is-in");
 	}
 
+	/**
+	 * Starts the exit animation for the current greeting.
+	 */
 	function hideGreeting() {
 		helloEl.classList.remove("is-in");
 		helloEl.classList.add("is-out");
 	}
 
-	function setProgress(i) {
-		const pct = Math.round(((i + 1) / TOTAL) * 100);
-		bar.style.width = pct + "%";
+	/**
+	 * Updates the progress bar based on the current greeting index.
+	 */
+	function updateProgress(i) {
+		const percentage = Math.round(((i + 1) / greetings.length) * 100);
+		progressBar.style.width = `${percentage}%`;
 	}
 
-	async function runIntro() {
-		showGreeting(greetings[idx]);
-		setProgress(idx);
+	/**
+	 * Reveals the main page content after the intro wipe begins.
+	 */
+	function revealMainContent() {
+		page.classList.add("is-visible");
+		intro.style.display = "none";
 
-		while (idx < TOTAL - 1) {
-			await wait(getHoldMs(idx));
-			hideGreeting();
-			await wait(OUT_MS + getGapMs(idx));
-			idx++;
-			showGreeting(greetings[idx]);
-			setProgress(idx);
-		}
+		setTimeout(() => {
+			header.classList.remove("is-hidden");
+			header.classList.add("reveal");
+		}, INTRO_TIMING.headerRevealDelay);
 
-		await wait(getHoldMs(idx) + 220);
-		transitionOut();
+		setTimeout(() => {
+			hero.classList.add("reveal");
+		}, INTRO_TIMING.heroRevealDelay);
+
+		setTimeout(() => {
+			hobbiesSection.classList.remove("is-hidden");
+			hobbiesSection.classList.add("reveal");
+		}, INTRO_TIMING.hobbiesRevealDelay);
+
+		unlockIntroScroll();
 	}
 
-	function revealHero() {
-		const hero = document.querySelector(".hero");
-		hero.classList.add("reveal");
-	}
-
-	const WIPE_MS = 3600;
-
+	/**
+	 * Plays the wipe transition, then swaps the intro with the page content.
+	 */
 	function transitionOut() {
 		wipe.classList.remove("animate");
 		void wipe.offsetWidth;
 		wipe.classList.add("animate");
 
 		setTimeout(() => {
-			page.classList.add("is-visible");
-			intro.style.display = "none";
-			document.body.style.overflow = "auto";
-
-			setTimeout(() => {
-				const header = document.querySelector(".site-header");
-				header.classList.remove("is-hidden");
-				header.classList.add("reveal");
-			}, 200);
-
-			setTimeout(() => {
-				revealHero();
-			}, 350);
-
-			setTimeout(() => {
-				const hobbies = document.querySelector(".section-hobbies");
-				hobbies.classList.remove("is-hidden");
-				hobbies.classList.add("reveal");
-			}, 1000);
-
-			document.body.classList.remove("no-scroll");
-		}, WIPE_MS * 0.35);
+			revealMainContent();
+		}, INTRO_TIMING.wipe * 0.35);
 	}
 
+	/**
+	 * Utility helper for timed pauses inside the intro sequence.
+	 */
 	function wait(ms) {
 		return new Promise((r) => setTimeout(r, ms));
 	}
 
-	runIntro();
+	/**
+	 * Runs the full greeting sequence from start to finish.
+	 */
+	async function runIntroSequence() {
+		showGreeting(greetings[currentGreetingIndex]);
+		updateProgress(currentGreetingIndex);
+
+		while (currentGreetingIndex < greetings.length - 1) {
+			await wait(getHoldDuration(currentGreetingIndex));
+			hideGreeting();
+			await wait(INTRO_TIMING.out + getGapDuration(currentGreetingIndex));
+
+			currentGreetingIndex++;
+			showGreeting(greetings[currentGreetingIndex]);
+			updateProgress(currentGreetingIndex);
+		}
+
+		await wait(getHoldDuration(currentGreetingIndex) + INTRO_TIMING.finalPause);
+		transitionOut();
+	}
+
+	lockIntroScroll();
+	runIntroSequence();
 }
 
 introduction();
